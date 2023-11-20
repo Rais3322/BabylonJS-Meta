@@ -4,9 +4,30 @@
   "description": "Cube Meta",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "client-start": "webpack serve --env port=3000"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/circular-dependency-plugin": "^5.0.8",
+    "@types/node": "^20.9.2",
+    "@types/webpack": "^5.28.5",
+    "@types/webpack-bundle-analyzer": "^4.6.3",
+    "@types/webpack-dev-server": "^4.7.2",
+    "circular-dependency-plugin": "^5.2.2",
+    "copy-webpack-plugin": "^11.0.0",
+    "file-loader": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^9.0.2",
+    "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "^2.7.6",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "webpack": "^5.89.0",
+    "webpack-bundle-analyzer": "^4.10.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "webpack-merge": "^5.10.0"
+  }
 }
