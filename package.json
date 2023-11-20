@@ -10,6 +10,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babylonjs/gui-editor": "^6.30.0",
+    "@babylonjs/inspector": "^6.30.0",
+    "@babylonjs/materials": "^6.30.0",
+    "@colyseus/core": "^0.15.13",
+    "@colyseus/loadtest": "^0.15.2",
+    "@colyseus/monitor": "^0.15.2",
+    "@colyseus/schema": "^2.0.24",
+    "@colyseus/ws-transport": "^0.15.1",
     "@types/circular-dependency-plugin": "^5.0.8",
     "@types/node": "^20.9.2",
     "@types/webpack": "^5.28.5",
@@ -29,5 +37,13 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "webpack-merge": "^5.10.0"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^6.30.0",
+    "@babylonjs/gui": "^6.30.0",
+    "@babylonjs/loaders": "^6.30.0",
+    "@babylonjs/serializers": "^6.30.0",
+    "babylonjs-gltf2interface": "^6.30.0",
+    "colyseus": "^0.15.13"
   }
 }

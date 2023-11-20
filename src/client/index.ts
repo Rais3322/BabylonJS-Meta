@@ -1,2 +1,4 @@
+import { GameEngine } from "./engine/GameEngine";
 
-console.log('hi 11122');
+
+new GameEngine(document.getElementById("renderCanvas") as HTMLCanvasElement);
