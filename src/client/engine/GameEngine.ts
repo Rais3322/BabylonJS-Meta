@@ -1,12 +1,14 @@
 import {
   Engine,
 } from "@babylonjs/core";
+import { Network } from "client/controllers/Network";
 import { Level } from "client/levels/DemoLevel";
 
 export class GameEngine {
   canvas: HTMLCanvasElement;
   renderEngine: Engine;
   currentLevel: Level | null = null;
+  client: Network;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -17,6 +19,10 @@ export class GameEngine {
     });
 
     this.init();
+
+    // create colyseus client
+    this.client = new Network(__WS_PORT__);
+
     this.createScene();
   }
 

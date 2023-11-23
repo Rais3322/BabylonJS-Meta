@@ -26,6 +26,7 @@ export default (env: BuildEnv) => {
   const PORT = env?.port || 3000;
   const isDev = mode === 'development';
   const apiUrl = getApiUrl(mode, env?.apiUrl);
+  const wsport = env?.wsport || 8080; // web socket port
 
   const config: webpack.Configuration = buildWebpackConfig({
     mode,
@@ -34,6 +35,7 @@ export default (env: BuildEnv) => {
     port: PORT,
     apiUrl,
     project: 'frontend',
+    wsport,
   });
 
   return config;

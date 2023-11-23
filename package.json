@@ -44,6 +44,7 @@
     "@babylonjs/loaders": "^6.30.0",
     "@babylonjs/serializers": "^6.30.0",
     "babylonjs-gltf2interface": "^6.30.0",
-    "colyseus": "^0.15.13"
+    "colyseus": "^0.15.13",
+    "colyseus.js": "^0.15.14"
   }
 }
