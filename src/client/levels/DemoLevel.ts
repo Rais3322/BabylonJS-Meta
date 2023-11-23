@@ -12,6 +12,7 @@ export class Level {
   public scene: Scene;
   public playerController: PlayerController;
   public levelController: LevelController;
+  public shadowGenerator: ShadowGenerator | null = null;
 
   constructor(gameEngine: GameEngine) {
     this.gameEngine = gameEngine;
@@ -40,12 +41,8 @@ export class Level {
     const light = new HemisphericLight("HemisphericLight", new Vector3(1, 1, 0), this.scene);
     light.intensity = 0.7;
 
-    // const dirlight = new DirectionalLight("dirlight", new Vector3(0, -1, 1), this.scene);
-
-    // const shadowGenerator = new ShadowGenerator(1024, dirlight);
-
-    const ball = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, this.scene);
-    ball.position = new Vector3(0, 1, 0);
+    const dirlight = new DirectionalLight("dirlight", new Vector3(-1, -2, -1), this.scene);
+    dirlight.position = new Vector3(20, 40, 20);
 
     const ground = MeshBuilder.CreateGround(
       "ground",
@@ -64,6 +61,19 @@ export class Level {
     // @ts-ignore
     groundMaterial.diffuseTexture.vScale = 1000;
 
+    const ball = MeshBuilder.CreateSphere('sphere', { diameter: 1 }, this.scene);
+    ball.receiveShadows = true;
+    ball.position.z = -32;
+
+    // shadow
+    const shadowGenerator = new ShadowGenerator(2048, dirlight);
+    // shadowGenerator.useBlurExponentialShadowMap = true;
+    shadowGenerator.useKernelBlur = true;
+    shadowGenerator.blurKernel = 1;
+    shadowGenerator.filter = 6; // PCF
+    this.shadowGenerator = shadowGenerator;
+    shadowGenerator?.getShadowMap()?.renderList?.push(ball);
+
     const skybox = MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, this.scene);
     var skyboxMaterial = new StandardMaterial("skyBox", this.scene);
     skyboxMaterial.backFaceCulling = false;
@@ -78,7 +88,7 @@ export class Level {
   }
 
   public async loadAssets() {
-    const transformNode = new TransformNode("RosAtom_Full");
+    const transformNode = new TransformNode("RosAtom");
     const RosAtom_Full = SceneLoader.ImportMesh(
       "",
       "./models/",
@@ -86,23 +96,25 @@ export class Level {
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
         meshes.forEach((mesh) => {
-          // mesh.checkCollisions = true;
-          // mesh.position.y += 5.6;
-          // mesh.parent = transformNode;
+          mesh.checkCollisions = true;
           mesh.receiveShadows = true;
+
+          if (mesh.name === '__root__') {
+            mesh.name = 'RosAtom_Full_root';
+            mesh.parent = transformNode;
+            mesh.position.set(0, 10.6, 0);
+          }
         });
-        // transformNodes.forEach(trans => {
-        //   trans.position.y += 5.6;
-        // });
-        // console.log(this.scene.rootNodes);
 
-        const root = this.scene.getNodeByName('__root__');
-        if (root) {
-          root.parent = transformNode;
-          root.name = 'RosAtom_Full_root';
-        }
+        // const root = this.scene.getNodeByName('__root__');
+        // if (root) {
+        //   root.parent = transformNode;
+        //   root.name = 'RosAtom_Full_root';
+        // }
 
-        transformNode.position.set(0, 10.6, 0);
+        // transformNode.position.set(0, 10.6, 0);
+
+        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
       },
     );
 

@@ -11,10 +11,11 @@ export class Player {
     this.playerController = playerController;
     this.scene = this.playerController.level.scene;
 
-    this.camera = this.freeCamera();
+    const camera2 = this.freeCamera("free_camera");
+    camera2.position.z = -36;
 
-    // this.loadAssets();
-    this.simpleMesh();
+    this.loadAssets();
+    // this.simpleMesh();
   }
 
   public loadAssets() {
@@ -45,6 +46,7 @@ export class Player {
 
         const camera = new ArcRotateCamera("ArcRotateCamera", alpha, beta, 5, target, this.scene);
         this.camera?.dispose();
+        this.scene.activeCamera = camera;
         this.camera = camera;
 
         //standard camera setting
@@ -132,7 +134,5 @@ export class Player {
   private async simpleMesh() {
     const player = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, this.scene);
     player.parent = this.camera;
-
-    const camera2 = this.freeCamera("camera2");
   }
 }
