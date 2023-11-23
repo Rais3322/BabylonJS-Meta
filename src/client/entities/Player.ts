@@ -1,4 +1,4 @@
-import { ArcRotateCamera, Camera, FreeCamera, Scene, SceneLoader, Vector3 } from "@babylonjs/core";
+import { MeshBuilder, ArcRotateCamera, Camera, FreeCamera, Scene, SceneLoader, Vector3 } from "@babylonjs/core";
 import { CharacterController } from "client/controllers/CharacterController";
 import { PlayerController } from "client/controllers/PlayerController";
 
@@ -12,7 +12,9 @@ export class Player {
     this.scene = this.playerController.level.scene;
 
     this.camera = this.freeCamera();
+
     // this.loadAssets();
+    this.simpleMesh();
   }
 
   public loadAssets() {
@@ -103,9 +105,9 @@ export class Player {
     // });
   }
 
-  private freeCamera(): Camera {
+  private freeCamera(name = "camera"): Camera {
     // свободный полет
-    const camera = new FreeCamera("camera", new Vector3(0, 10, 0), this.scene);
+    const camera = new FreeCamera(name, new Vector3(0, 1, 0), this.scene);
     camera.attachControl();
 
     // camera.applyGravity = true;
@@ -125,5 +127,12 @@ export class Player {
     camera.keysDownward.push(16, 69); // e & shift
 
     return camera;
+  }
+
+  private async simpleMesh() {
+    const player = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, this.scene);
+    player.parent = this.camera;
+
+    const camera2 = this.freeCamera("camera2");
   }
 }
