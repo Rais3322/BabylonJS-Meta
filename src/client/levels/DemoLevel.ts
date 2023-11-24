@@ -118,15 +118,110 @@ export class Level {
       },
     );
 
-    // const nuclear = await SceneLoader.ImportMeshAsync(
-    //   "",
-    //   "./models/",
-    //   "Ветер.glb",
-    //   this.scene,
-    // ).then(result => {
-    //   console.log(result);
-    // }).catch(error => {
-    //   console.log(error);
-    // })
+    SceneLoader.ImportMesh(
+      "",
+      "./models/",
+      "ядерка.glb",
+      this.scene,
+      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        meshes.forEach((mesh) => {
+          mesh.checkCollisions = true;
+          mesh.receiveShadows = true;
+
+          if (mesh.name === '__root__') {
+            mesh.name = 'ядерка_root';
+            mesh.parent = transformNode;
+            mesh.position.set(-47.5, -0.5, 4.91);
+            mesh.rotate(Vector3.Up(), Math.PI / 2);
+          }
+        });
+
+        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
+      }
+    );
+
+    SceneLoader.ImportMesh(
+      "",
+      "./models/",
+      "эко.glb",
+      this.scene,
+      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        meshes.forEach((mesh) => {
+          mesh.checkCollisions = true;
+          mesh.receiveShadows = true;
+
+          if (mesh.name === '__root__') {
+            mesh.name = 'эко_root';
+            mesh.parent = transformNode;
+            mesh.position.set(-63.39, -0.47, -2.73);
+          }
+        });
+
+        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
+      }
+    );
+
+    SceneLoader.ImportMesh(
+      "",
+      "./models/",
+      "ветряк.glb",
+      this.scene,
+      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        meshes.forEach((mesh) => {
+          mesh.checkCollisions = true;
+          mesh.receiveShadows = true;
+
+          if (mesh.name === '__root__') {
+            mesh.name = 'ветряк_root';
+            mesh.parent = transformNode;
+            mesh.position.set(-65.61, -0.43, 12.62);
+          }
+        });
+
+        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
+      }
+    );
+
+    SceneLoader.ImportMesh(
+      "",
+      "./models/",
+      "водород.glb",
+      this.scene,
+      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        meshes.forEach((mesh) => {
+          mesh.checkCollisions = true;
+          mesh.receiveShadows = true;
+
+          if (mesh.name === '__root__') {
+            mesh.name = 'водород_root';
+            mesh.parent = transformNode;
+            mesh.position.set(-84.962, -0.72, 13.041);
+          }
+        });
+
+        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
+      }
+    );
+
+    SceneLoader.ImportMesh(
+      "",
+      "./models/",
+      "морской.glb",
+      this.scene,
+      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        meshes.forEach((mesh) => {
+          mesh.checkCollisions = true;
+          mesh.receiveShadows = true;
+
+          if (mesh.name === '__root__') {
+            mesh.name = 'морской_root';
+            mesh.parent = transformNode;
+            mesh.position.set(-101.69, -0.20, 13.04);
+          }
+        });
+
+        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
+      }
+    );
   }
 }

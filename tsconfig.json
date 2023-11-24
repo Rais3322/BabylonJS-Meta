@@ -27,6 +27,7 @@
     "./src/**/*.ts"
   ],
   "exclude": [
-    ".fttemplates/"
+    ".fttemplates/",
+    "./src/server/"
   ]
 }

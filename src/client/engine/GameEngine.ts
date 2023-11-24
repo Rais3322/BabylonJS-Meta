@@ -46,9 +46,14 @@ export class GameEngine {
   }
 
   private render() {
+    let divFps = document.getElementById("fps");
+
     this.renderEngine.runRenderLoop(() => {
       if (this.currentLevel) {
         this.currentLevel.scene.render();
+      }
+      if (divFps) {
+        divFps.innerHTML = this.renderEngine.getFps().toFixed() + " fps";
       }
     });
   }
