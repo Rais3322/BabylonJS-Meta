@@ -8,7 +8,7 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import { BuildOptions } from './types/config';
 
 export function buildPlugins({
-  paths, isDev, apiUrl, project,
+  paths, isDev, apiUrl, project, wsport,
 }: BuildOptions): webpack.WebpackPluginInstance[] {
   const plugins = [
     new HtmlWebpackPlugin({
@@ -19,6 +19,7 @@ export function buildPlugins({
       __IS_DEV__: JSON.stringify(isDev),
       __API_URL__: JSON.stringify(apiUrl),
       __PROJECT__: JSON.stringify(project),
+      __WS_PORT__: JSON.stringify(wsport),
     }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {

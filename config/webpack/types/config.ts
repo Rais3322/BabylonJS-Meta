@@ -14,10 +14,12 @@ export interface BuildOptions {
   port: number,
   apiUrl: string,
   project: 'frontend',
+  wsport: number,
 }
 
 export interface BuildEnv {
   mode: BuildMode,
   port: number,
   apiUrl: string,
+  wsport: number,
 }

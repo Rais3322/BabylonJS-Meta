@@ -46,6 +46,6 @@
     "@colyseus/arena": "^0.14.24",
     "babylonjs-gltf2interface": "^6.30.0",
     "colyseus": "^0.15.13",
-    "express": "^4.18.2"
+    "colyseus.js": "^0.15.14"
   }
 }
