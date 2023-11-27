@@ -1,11 +1,17 @@
 import {
   Engine,
+  WebGPUEngine,
+  EngineFactory,
+  Constants,
+  SceneOptimizer,
+  NullEngine,
 } from "@babylonjs/core";
 import { Network } from "client/controllers/Network";
 import { Level } from "client/levels/DemoLevel";
 
 export class GameEngine {
   canvas: HTMLCanvasElement;
+  // @ts-ignore // разделить GameEngine и вынести сущности в парам констуктора
   renderEngine: Engine;
   currentLevel: Level | null = null;
   client: Network;
@@ -13,17 +19,50 @@ export class GameEngine {
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
 
-    this.renderEngine = new Engine(this.canvas, true, {
-      adaptToDeviceRatio: true,
-      antialias: true,
-    });
+    this.createRenderEngine()
+      .then(renderEngine => {
+        this.renderEngine = renderEngine;
 
-    this.init();
+        this.init();
+
+        this.createScene();
+        this.optimize();
+      })
+      .catch(err => {
+        this.renderEngine = new NullEngine();
+        console.error(err);
+      });
 
     // create colyseus client
     this.client = new Network(__WS_PORT__);
+  }
 
-    this.createScene();
+  private async optimize() {
+    //test
+    setTimeout(async () => {
+      const supported = await WebGPUEngine.IsSupportedAsync;
+      if (supported) {
+        // +7 fps for WebGPUEngine
+        console.log('snapshotRendering');
+        this.renderEngine.snapshotRendering = true;
+        this.renderEngine.snapshotRenderingMode = Constants.SNAPSHOTRENDERING_STANDARD;
+      }
+    }, 6000);
+
+    setTimeout(() => {
+      if (this.currentLevel?.scene) {
+        // console.log('SceneOptimizer');
+        // SceneOptimizer.OptimizeAsync(this.currentLevel.scene);
+      }
+    }, 7000);
+  }
+
+  private async createRenderEngine() {
+    // dom.webgpu.enabled - firefox
+    return await EngineFactory.CreateAsync(this.canvas, {
+      adaptToDeviceRatio: true,
+      antialias: true,
+    });
   }
 
   private init() {

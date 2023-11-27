@@ -1,4 +1,4 @@
-import { ShadowGenerator, DirectionalLight, CubeTexture, HemisphericLight, MeshBuilder, Scene, SceneLoader, StandardMaterial, Texture, TransformNode, Vector3 } from "@babylonjs/core";
+import { Color3, ScenePerformancePriority, ShadowGenerator, DirectionalLight, CubeTexture, HemisphericLight, MeshBuilder, Scene, SceneLoader, StandardMaterial, Texture, TransformNode, Vector3 } from "@babylonjs/core";
 import { Inspector } from "@babylonjs/inspector";
 import { LevelController } from "client/controllers/LevelController";
 import { PlayerController } from "client/controllers/PlayerController";
@@ -37,6 +37,17 @@ export class Level {
     this.scene.gravity = new Vector3(0, gravity / framesPerSecond, 0);
     this.scene.collisionsEnabled = true;
 
+    // оптимизация, если вы всегда находитесь внутри скайбокса
+    this.scene.autoClear = false; // Color buffer
+    // в webgpu autoClearDepthAndStencil дает белую картинку рендера
+    // this.scene.autoClearDepthAndStencil = false; // Depth and stencil
+
+    // Blocking the dirty mechanism
+    // https://doc.babylonjs.com/features/featuresDeepDive/scene/optimize_your_scene#blocking-the-dirty-mechanism
+    this.scene.blockMaterialDirtyMechanism = true;
+
+    this.scene.performancePriority = ScenePerformancePriority.Intermediate;
+
     // ambient background light
     const light = new HemisphericLight("HemisphericLight", new Vector3(1, 1, 0), this.scene);
     light.intensity = 0.7;
@@ -52,9 +63,11 @@ export class Level {
     ground.checkCollisions = true;
     ground.position = new Vector3(0, -1, 0);
     ground.receiveShadows = true;
-    const groundMaterial = new StandardMaterial("backgroundMaterial", this.scene);
+    ground.freezeWorldMatrix();
+    const groundMaterial = new StandardMaterial("ground", this.scene);
     groundMaterial.diffuseTexture = new Texture("textures/env/grass.jpg", this.scene);
     ground.material = groundMaterial;
+    groundMaterial.freeze();
     // groundMaterial.diffuseTexture.scale(1);
     // @ts-ignore
     groundMaterial.diffuseTexture.uScale = 1000;
@@ -75,13 +88,18 @@ export class Level {
     shadowGenerator?.getShadowMap()?.renderList?.push(ball);
 
     const skybox = MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, this.scene);
+    skybox.freezeWorldMatrix();
     var skyboxMaterial = new StandardMaterial("skyBox", this.scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new CubeTexture("textures/skybox/skybox", this.scene, undefined, undefined,);
+    skyboxMaterial.reflectionTexture = new CubeTexture("textures/skybox/TropicalSunnyDay", this.scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-    // skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+    skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+    skyboxMaterial.specularPower = 128;
+    skyboxMaterial.indexOfRefraction = 0.98;
+    skyboxMaterial.invertRefractionY = false;
     // skyboxMaterial.specularColor = new Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
+    skyboxMaterial.freeze();
 
     skyboxMaterial.disableLighting = true; // remove all light reflections on our box
     skybox.infiniteDistance = true; // follow our camera's position
@@ -95,6 +113,8 @@ export class Level {
       "RosAtom_Full.glb",
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+
         meshes.forEach((mesh) => {
           mesh.checkCollisions = true;
           mesh.receiveShadows = true;
@@ -104,6 +124,15 @@ export class Level {
             mesh.parent = transformNode;
             mesh.position.set(0, 10.6, 0);
           }
+
+          // пропускается обновление бокса для коллизии
+          mesh.doNotSyncBoundingInfo = true;
+
+          // пропускается трансформация
+          mesh.freezeWorldMatrix();
+
+          // ScenePerformancePriority.Intermediate вкл следующее по умолчанию
+          mesh.alwaysSelectAsActiveMesh = false;
         });
 
         // const root = this.scene.getNodeByName('__root__');
@@ -113,6 +142,7 @@ export class Level {
         // }
 
         // transformNode.position.set(0, 10.6, 0);
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
 
         this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
       },
@@ -124,6 +154,8 @@ export class Level {
       "ядерка.glb",
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+
         meshes.forEach((mesh) => {
           mesh.checkCollisions = true;
           mesh.receiveShadows = true;
@@ -134,7 +166,12 @@ export class Level {
             mesh.position.set(-47.5, -0.5, 4.91);
             mesh.rotate(Vector3.Up(), Math.PI / 2);
           }
+          mesh.doNotSyncBoundingInfo = true;
+          mesh.freezeWorldMatrix();
+          mesh.alwaysSelectAsActiveMesh = false;
         });
+
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
 
         this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
       }
@@ -146,6 +183,8 @@ export class Level {
       "эко.glb",
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+
         meshes.forEach((mesh) => {
           mesh.checkCollisions = true;
           mesh.receiveShadows = true;
@@ -155,7 +194,12 @@ export class Level {
             mesh.parent = transformNode;
             mesh.position.set(-63.39, -0.47, -2.73);
           }
+          mesh.doNotSyncBoundingInfo = true;
+          mesh.freezeWorldMatrix();
+          mesh.alwaysSelectAsActiveMesh = false;
         });
+
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
 
         this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
       }
@@ -167,6 +211,8 @@ export class Level {
       "ветряк.glb",
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+
         meshes.forEach((mesh) => {
           mesh.checkCollisions = true;
           mesh.receiveShadows = true;
@@ -176,7 +222,12 @@ export class Level {
             mesh.parent = transformNode;
             mesh.position.set(-65.61, -0.43, 12.62);
           }
+          mesh.doNotSyncBoundingInfo = true;
+          mesh.freezeWorldMatrix();
+          mesh.alwaysSelectAsActiveMesh = false;
         });
+
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
 
         this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
       }
@@ -188,6 +239,8 @@ export class Level {
       "водород.glb",
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+
         meshes.forEach((mesh) => {
           mesh.checkCollisions = true;
           mesh.receiveShadows = true;
@@ -197,7 +250,12 @@ export class Level {
             mesh.parent = transformNode;
             mesh.position.set(-84.962, -0.72, 13.041);
           }
+          mesh.doNotSyncBoundingInfo = true;
+          mesh.freezeWorldMatrix();
+          mesh.alwaysSelectAsActiveMesh = false;
         });
+
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
 
         this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
       }
@@ -209,6 +267,8 @@ export class Level {
       "морской.glb",
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+
         meshes.forEach((mesh) => {
           mesh.checkCollisions = true;
           mesh.receiveShadows = true;
@@ -218,7 +278,12 @@ export class Level {
             mesh.parent = transformNode;
             mesh.position.set(-101.69, -0.20, 13.04);
           }
+          mesh.freezeWorldMatrix();
+          mesh.doNotSyncBoundingInfo = true;
+          mesh.alwaysSelectAsActiveMesh = false;
         });
+
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
 
         this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
       }

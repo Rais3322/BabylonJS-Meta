@@ -14,8 +14,10 @@ export class Player {
     const camera2 = this.freeCamera("free_camera");
     camera2.position.z = -36;
 
-    this.loadAssets();
+    // this.loadAssets();
     // this.simpleMesh();
+
+    this.scene.activeCamera = camera2;
   }
 
   public loadAssets() {
@@ -109,7 +111,8 @@ export class Player {
 
   private freeCamera(name = "camera"): Camera {
     // свободный полет
-    const camera = new FreeCamera(name, new Vector3(0, 1, 0), this.scene);
+    const camera = new FreeCamera(name, new Vector3(108, 30, -35), this.scene);
+    camera.setTarget(new Vector3(0, 0, 0));
     camera.attachControl();
 
     // camera.applyGravity = true;
