@@ -48,13 +48,6 @@ export class GameEngine {
         this.renderEngine.snapshotRenderingMode = Constants.SNAPSHOTRENDERING_STANDARD;
       }
     }, 6000);
-
-    setTimeout(() => {
-      if (this.currentLevel?.scene) {
-        // console.log('SceneOptimizer');
-        // SceneOptimizer.OptimizeAsync(this.currentLevel.scene);
-      }
-    }, 7000);
   }
 
   private async createRenderEngine() {

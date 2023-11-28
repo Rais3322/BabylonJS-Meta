@@ -1,4 +1,4 @@
-import { Color3, ScenePerformancePriority, ShadowGenerator, DirectionalLight, CubeTexture, HemisphericLight, MeshBuilder, Scene, SceneLoader, StandardMaterial, Texture, TransformNode, Vector3 } from "@babylonjs/core";
+import { AbstractMesh, ShadowsOptimization, TextureOptimization, HardwareScalingOptimization, SceneOptimizerOptions, SceneOptimizer, Color3, ScenePerformancePriority, ShadowGenerator, DirectionalLight, CubeTexture, HemisphericLight, MeshBuilder, Scene, SceneLoader, StandardMaterial, Texture, TransformNode, Vector3, Mesh } from "@babylonjs/core";
 import { Inspector } from "@babylonjs/inspector";
 import { LevelController } from "client/controllers/LevelController";
 import { PlayerController } from "client/controllers/PlayerController";
@@ -27,6 +27,8 @@ export class Level {
 
     // TODO: Player Spawner
     const player = new Player(this.playerController);
+
+    this.optimise();
   }
 
   public createScene() {
@@ -63,11 +65,10 @@ export class Level {
     ground.checkCollisions = true;
     ground.position = new Vector3(0, -1, 0);
     ground.receiveShadows = true;
-    ground.freezeWorldMatrix();
+    this.toStaticMesh(ground);
     const groundMaterial = new StandardMaterial("ground", this.scene);
     groundMaterial.diffuseTexture = new Texture("textures/env/grass.jpg", this.scene);
     ground.material = groundMaterial;
-    groundMaterial.freeze();
     // groundMaterial.diffuseTexture.scale(1);
     // @ts-ignore
     groundMaterial.diffuseTexture.uScale = 1000;
@@ -88,7 +89,7 @@ export class Level {
     shadowGenerator?.getShadowMap()?.renderList?.push(ball);
 
     const skybox = MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, this.scene);
-    skybox.freezeWorldMatrix();
+    this.toStaticMesh(skybox);
     var skyboxMaterial = new StandardMaterial("skyBox", this.scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new CubeTexture("textures/skybox/TropicalSunnyDay", this.scene);
@@ -99,18 +100,24 @@ export class Level {
     skyboxMaterial.invertRefractionY = false;
     // skyboxMaterial.specularColor = new Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
-    skyboxMaterial.freeze();
 
     skyboxMaterial.disableLighting = true; // remove all light reflections on our box
     skybox.infiniteDistance = true; // follow our camera's position
   }
 
-  public async loadAssets() {
-    const transformNode = new TransformNode("RosAtom");
-    const RosAtom_Full = SceneLoader.ImportMesh(
+  private toStaticMesh(mesh: Mesh): void {
+    // пропускается трансформация
+    mesh.freezeWorldMatrix();
+    // пропускается материал
+    mesh.material?.freeze();
+  }
+
+  private load(sceneFilename: string, rootName: string, parent: TransformNode,
+    rootCb: (mesh: AbstractMesh) => void | undefined) {
+    SceneLoader.ImportMesh(
       "",
       "./models/",
-      "RosAtom_Full.glb",
+      sceneFilename,
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
         this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
@@ -120,9 +127,12 @@ export class Level {
           mesh.receiveShadows = true;
 
           if (mesh.name === '__root__') {
-            mesh.name = 'RosAtom_Full_root';
-            mesh.parent = transformNode;
-            mesh.position.set(0, 10.6, 0);
+            mesh.name = rootName;
+            mesh.parent = parent;
+
+            if (rootCb!!) {
+              rootCb(mesh);
+            }
           }
 
           // пропускается обновление бокса для коллизии
@@ -131,162 +141,65 @@ export class Level {
           // пропускается трансформация
           mesh.freezeWorldMatrix();
 
-          // ScenePerformancePriority.Intermediate вкл следующее по умолчанию
+          // ScenePerformancePriority.Intermediate включает следующее по умолчанию
           mesh.alwaysSelectAsActiveMesh = false;
         });
 
-        // const root = this.scene.getNodeByName('__root__');
-        // if (root) {
-        //   root.parent = transformNode;
-        //   root.name = 'RosAtom_Full_root';
-        // }
-
-        // transformNode.position.set(0, 10.6, 0);
         this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
 
         this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
       },
     );
+  }
 
-    SceneLoader.ImportMesh(
-      "",
-      "./models/",
-      "ядерка.glb",
-      this.scene,
-      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+  public async loadAssets() {
+    const transformNode = new TransformNode("RosAtom");
 
-        meshes.forEach((mesh) => {
-          mesh.checkCollisions = true;
-          mesh.receiveShadows = true;
+    this.load("RosAtom_Full.glb", 'RosAtom_Full_root', transformNode,
+      mesh => { mesh.position.set(0, 10.6, 0) },
+    );
 
-          if (mesh.name === '__root__') {
-            mesh.name = 'ядерка_root';
-            mesh.parent = transformNode;
-            mesh.position.set(-47.5, -0.5, 4.91);
-            mesh.rotate(Vector3.Up(), Math.PI / 2);
-          }
-          mesh.doNotSyncBoundingInfo = true;
-          mesh.freezeWorldMatrix();
-          mesh.alwaysSelectAsActiveMesh = false;
-        });
-
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
-
-        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
+    this.load("ядерка.glb", 'ядерка_root', transformNode,
+      mesh => {
+        mesh.position.set(-47.5, -0.5, 4.91);
+        mesh.rotate(Vector3.Up(), Math.PI / 2);
       }
     );
 
-    SceneLoader.ImportMesh(
-      "",
-      "./models/",
-      "эко.glb",
-      this.scene,
-      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
-
-        meshes.forEach((mesh) => {
-          mesh.checkCollisions = true;
-          mesh.receiveShadows = true;
-
-          if (mesh.name === '__root__') {
-            mesh.name = 'эко_root';
-            mesh.parent = transformNode;
-            mesh.position.set(-63.39, -0.47, -2.73);
-          }
-          mesh.doNotSyncBoundingInfo = true;
-          mesh.freezeWorldMatrix();
-          mesh.alwaysSelectAsActiveMesh = false;
-        });
-
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
-
-        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
+    this.load("эко.glb", 'эко_root', transformNode,
+      mesh => {
+        mesh.position.set(-63.39, -0.47, -2.73);
       }
     );
 
-    SceneLoader.ImportMesh(
-      "",
-      "./models/",
-      "ветряк.glb",
-      this.scene,
-      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
-
-        meshes.forEach((mesh) => {
-          mesh.checkCollisions = true;
-          mesh.receiveShadows = true;
-
-          if (mesh.name === '__root__') {
-            mesh.name = 'ветряк_root';
-            mesh.parent = transformNode;
-            mesh.position.set(-65.61, -0.43, 12.62);
-          }
-          mesh.doNotSyncBoundingInfo = true;
-          mesh.freezeWorldMatrix();
-          mesh.alwaysSelectAsActiveMesh = false;
-        });
-
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
-
-        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
-      }
+    this.load("ветряк.glb", 'ветряк_root', transformNode,
+      mesh => { mesh.position.set(-65.61, -0.43, 12.62) },
     );
 
-    SceneLoader.ImportMesh(
-      "",
-      "./models/",
-      "водород.glb",
-      this.scene,
-      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
-
-        meshes.forEach((mesh) => {
-          mesh.checkCollisions = true;
-          mesh.receiveShadows = true;
-
-          if (mesh.name === '__root__') {
-            mesh.name = 'водород_root';
-            mesh.parent = transformNode;
-            mesh.position.set(-84.962, -0.72, 13.041);
-          }
-          mesh.doNotSyncBoundingInfo = true;
-          mesh.freezeWorldMatrix();
-          mesh.alwaysSelectAsActiveMesh = false;
-        });
-
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
-
-        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
-      }
+    this.load("водород.glb", 'водород_root', transformNode,
+      mesh => { mesh.position.set(-84.962, -0.72, 13.041) },
     );
 
-    SceneLoader.ImportMesh(
-      "",
-      "./models/",
-      "морской.glb",
-      this.scene,
-      (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
-
-        meshes.forEach((mesh) => {
-          mesh.checkCollisions = true;
-          mesh.receiveShadows = true;
-
-          if (mesh.name === '__root__') {
-            mesh.name = 'морской_root';
-            mesh.parent = transformNode;
-            mesh.position.set(-101.69, -0.20, 13.04);
-          }
-          mesh.freezeWorldMatrix();
-          mesh.doNotSyncBoundingInfo = true;
-          mesh.alwaysSelectAsActiveMesh = false;
-        });
-
-        this.scene.blockfreeActiveMeshesAndRenderingGroups = false;
-
-        this.shadowGenerator?.getShadowMap()?.renderList?.push(...meshes);
-      }
+    this.load("морской.glb", 'морской_root', transformNode,
+      mesh => { mesh.position.set(-101.69, -0.20, 13.04) },
     );
+  }
+
+  private optimise() {
+    const options = new SceneOptimizerOptions(60);
+    options.addOptimization(new HardwareScalingOptimization(0, 1));
+    // options.addOptimization(new TextureOptimization(1, 256)); // белый экран
+    // options.addOptimization(new ShadowsOptimization(0)); // белый экран
+
+    // const options = SceneOptimizerOptions.HighDegradationAllowed(60);
+
+    // SceneOptimizer.OptimizeAsync(this.scene);
+    const optimizer = new SceneOptimizer(this.scene, options);
+    // optimizer.start();
+
+    setTimeout(() => {
+      console.log('SceneOptimizer');
+      optimizer.start();
+    }, 7000);
   }
 }
