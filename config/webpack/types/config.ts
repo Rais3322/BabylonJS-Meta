@@ -19,6 +19,7 @@ export interface BuildOptions {
   apiUrl: string,
   project: 'frontend',
   wsport: number,
+  wshost: string,
 }
 
 export interface BuildEnv {
@@ -26,4 +27,5 @@ export interface BuildEnv {
   port: number,
   apiUrl: string,
   wsport: number,
+  wshost: string,
 }

@@ -12,7 +12,7 @@ export class Network {
     //   url = "ws://localhost:" + port;
     // }
     // this._client = new Client(url);
-    const url = "ws://localhost:" + port; // "ws://localhost:2567";
+    const url = `ws://${__WS_HOST__}:${port}`; // "ws://localhost:2567";
     this._client = new Client(url);
     // console.log(`Constructor Network\nTrying to connect ${url}`);
   }

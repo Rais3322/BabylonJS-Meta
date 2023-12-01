@@ -9,7 +9,7 @@ import { BuildOptions } from './types/config';
 import path from 'path';
 
 export function buildPlugins({
-  paths, isDev, apiUrl, project, wsport,
+  paths, isDev, apiUrl, project, wsport, wshost,
 }: BuildOptions): webpack.WebpackPluginInstance[] {
   const plugins = [
     new HtmlWebpackPlugin({
@@ -21,6 +21,7 @@ export function buildPlugins({
       __API_URL__: JSON.stringify(apiUrl),
       __PROJECT__: JSON.stringify(project),
       __WS_PORT__: JSON.stringify(wsport),
+      __WS_HOST__: JSON.stringify(wshost),
     }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
