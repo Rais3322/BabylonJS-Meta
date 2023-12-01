@@ -5,6 +5,10 @@ export interface BuildPaths {
   build: string,
   html: string,
   src: string,
+  models: string,
+  textures: string,
+  buildModels: string,
+  buildTextures: string,
 }
 
 export interface BuildOptions {

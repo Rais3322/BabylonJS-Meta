@@ -6,6 +6,7 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CopyPlugin from 'copy-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import { BuildOptions } from './types/config';
+import path from 'path';
 
 export function buildPlugins({
   paths, isDev, apiUrl, project, wsport,
@@ -48,13 +49,14 @@ export function buildPlugins({
     //     chunkFilename: 'css/[name].[contenthash:5].css',
     //   }),
     // );
-    // plugins.push(
-    //   new CopyPlugin({
-    //     patterns: [
-    //       { from: paths.locales, to: paths.buildLocales },
-    //     ],
-    //   }),
-    // );
+    plugins.push(
+      new CopyPlugin({
+        patterns: [
+          { from: paths.models, to: paths.buildModels },
+          { from: paths.textures, to: paths.buildTextures },
+        ],
+      }),
+    );
   }
 
   return plugins;

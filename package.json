@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "client-start": "webpack serve --env port=3000",
+    "client-build": "webpack --env mode=production",
     "server-start": "tsx watch src/server/index.ts"
   },
   "keywords": [],

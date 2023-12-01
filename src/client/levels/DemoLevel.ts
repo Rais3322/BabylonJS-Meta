@@ -1,4 +1,4 @@
-import { AbstractMesh, ShadowsOptimization, TextureOptimization, HardwareScalingOptimization, SceneOptimizerOptions, SceneOptimizer, Color3, ScenePerformancePriority, ShadowGenerator, DirectionalLight, CubeTexture, HemisphericLight, MeshBuilder, Scene, SceneLoader, StandardMaterial, Texture, TransformNode, Vector3, Mesh } from "@babylonjs/core";
+import { AbstractMesh, ShadowsOptimization, TextureOptimization, HardwareScalingOptimization, SceneOptimizerOptions, SceneOptimizer, Color3, ScenePerformancePriority, ShadowGenerator, DirectionalLight, CubeTexture, HemisphericLight, MeshBuilder, Scene, SceneLoader, StandardMaterial, Texture, TransformNode, Vector3, Mesh, IPointerEvent, PickingInfo, PointerEventTypes } from "@babylonjs/core";
 import { Inspector } from "@babylonjs/inspector";
 import { LevelController } from "client/controllers/LevelController";
 import { PlayerController } from "client/controllers/PlayerController";
@@ -14,6 +14,8 @@ export class Level {
   public levelController: LevelController;
   public shadowGenerator: ShadowGenerator | null = null;
 
+  public onPointerDown: (evt: IPointerEvent, pickInfo: PickingInfo, type: PointerEventTypes) => void;
+
   constructor(gameEngine: GameEngine) {
     this.gameEngine = gameEngine;
 
@@ -23,7 +25,7 @@ export class Level {
 
     this.levelController = new LevelController(this);
 
-    this.playerController = new PlayerController(this);
+    this.playerController = new PlayerController(this, gameEngine.client);
 
     // TODO: Player Spawner
     const player = new Player(this.playerController);
@@ -38,6 +40,11 @@ export class Level {
     const gravity = -9.81;
     this.scene.gravity = new Vector3(0, gravity / framesPerSecond, 0);
     this.scene.collisionsEnabled = true;
+    this.scene.onPointerDown = (evt: IPointerEvent, pickInfo: PickingInfo, type: PointerEventTypes) => {
+      if (this.onPointerDown) {
+        this.onPointerDown(evt, pickInfo, type);
+      }
+    }
 
     // оптимизация, если вы всегда находитесь внутри скайбокса
     this.scene.autoClear = false; // Color buffer
@@ -159,30 +166,30 @@ export class Level {
       mesh => { mesh.position.set(0, 10.6, 0) },
     );
 
-    this.load("ядерка.glb", 'ядерка_root', transformNode,
-      mesh => {
-        mesh.position.set(-47.5, -0.5, 4.91);
-        mesh.rotate(Vector3.Up(), Math.PI / 2);
-      }
-    );
+    // this.load("ядерка.glb", 'ядерка_root', transformNode,
+    //   mesh => {
+    //     mesh.position.set(-47.5, -0.5, 4.91);
+    //     mesh.rotate(Vector3.Up(), Math.PI / 2);
+    //   }
+    // );
 
-    this.load("эко.glb", 'эко_root', transformNode,
-      mesh => {
-        mesh.position.set(-63.39, -0.47, -2.73);
-      }
-    );
+    // this.load("эко.glb", 'эко_root', transformNode,
+    //   mesh => {
+    //     mesh.position.set(-63.39, -0.47, -2.73);
+    //   }
+    // );
 
-    this.load("ветряк.glb", 'ветряк_root', transformNode,
-      mesh => { mesh.position.set(-65.61, -0.43, 12.62) },
-    );
+    // this.load("ветряк.glb", 'ветряк_root', transformNode,
+    //   mesh => { mesh.position.set(-65.61, -0.43, 12.62) },
+    // );
 
-    this.load("водород.glb", 'водород_root', transformNode,
-      mesh => { mesh.position.set(-84.962, -0.72, 13.041) },
-    );
+    // this.load("водород.glb", 'водород_root', transformNode,
+    //   mesh => { mesh.position.set(-84.962, -0.72, 13.041) },
+    // );
 
-    this.load("морской.glb", 'морской_root', transformNode,
-      mesh => { mesh.position.set(-101.69, -0.20, 13.04) },
-    );
+    // this.load("морской.glb", 'морской_root', transformNode,
+    //   mesh => { mesh.position.set(-101.69, -0.20, 13.04) },
+    // );
   }
 
   private optimise() {

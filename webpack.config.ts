@@ -20,13 +20,17 @@ export default (env: BuildEnv) => {
     build: path.resolve(__dirname, 'dist', 'client'),
     html: path.resolve(__dirname, 'public', 'index.html'),
     src: path.resolve(__dirname, 'src'),
+    models: path.resolve(__dirname, 'public', 'models'),
+    textures: path.resolve(__dirname, 'public', 'textures'),
+    buildModels: path.resolve(__dirname, 'dist', 'client', 'models'),
+    buildTextures: path.resolve(__dirname, 'dist', 'client', 'textures'),
   };
 
   const mode: BuildMode = env?.mode || 'development';
   const PORT = env?.port || 3000;
   const isDev = mode === 'development';
   const apiUrl = getApiUrl(mode, env?.apiUrl);
-  const wsport = env?.wsport || 8080; // web socket port
+  const wsport = env?.wsport || 2567; // web socket port
 
   const config: webpack.Configuration = buildWebpackConfig({
     mode,

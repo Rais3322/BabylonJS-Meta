@@ -11,13 +11,18 @@ export class Player {
     this.playerController = playerController;
     this.scene = this.playerController.level.scene;
 
+    this.playerController.mainPalyer = this;
+
     const camera2 = this.freeCamera("free_camera");
     camera2.position.z = -36;
+    this.camera = camera2;
 
     // this.loadAssets();
-    // this.simpleMesh();
+    this.simpleMesh();
 
     this.scene.activeCamera = camera2;
+
+    this.playerController.joinTheRoom(this.camera.position);
   }
 
   public loadAssets() {

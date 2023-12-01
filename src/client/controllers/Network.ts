@@ -1,6 +1,7 @@
 // colyseus
 import { Client, Room } from "colyseus.js";
 const ROOM_NAME = "game_room";
+
 export class Network {
   public _client: Client;
 
@@ -11,10 +12,20 @@ export class Network {
     //   url = "ws://localhost:" + port;
     // }
     // this._client = new Client(url);
-    const url = "ws://localhost:2567";
+    const url = "ws://localhost:" + port; // "ws://localhost:2567";
     this._client = new Client(url);
-    console.log(`Constructor Network\nTrying to connect ${url}`);
-    this._client.joinOrCreate(ROOM_NAME) // Norzy description костыль, остальные функции не вызываются
+    // console.log(`Constructor Network\nTrying to connect ${url}`);
+  }
+
+  public async joinOrCreateSceneRoom() {
+    // Norzy description костыль, остальные функции не вызываются
+    return this._client.joinOrCreate(ROOM_NAME)
+    // .then(room => {
+    //   console.log("Connected to roomId: " + room.roomId);
+    // })
+    // .catch(function (error) {
+    //   console.log("Couldn't connect.");
+    // });
   }
 
   public async joinRoom(roomId: string, token: string, character_id: string): Promise<any> {
