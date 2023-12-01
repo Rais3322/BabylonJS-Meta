@@ -20,10 +20,18 @@ export class MyRoom extends Room<MyRoomState> {
 
     onJoin(client: Client, options: any) {
         console.log(client.sessionId, "joined!");
+
+        // create Player instance
         const player = new Player();
+
+        // place Player at a random position in the floor
+        const FLOOR_SIZE = 500;
         player.x = 0
-        player.y = 0;
+        player.y = -1;
         player.z = 0
+
+        // place player in the map of players by its sessionId
+        // (client.sessionId is unique per connection!)
         this.state.players.set(client.sessionId, player);
 
         console.log("new player =>", player.toJSON());

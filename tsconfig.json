@@ -9,6 +9,13 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "strict": true,
+    // for server
+    "skipLibCheck": true, 
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": false,
+    "strictNullChecks": false,
+    "experimentalDecorators": true,
+    //===================
     //для абсолютного импорта ,
     "baseUrl": ".",
     "paths": {
@@ -26,8 +33,5 @@
   "include": [
     "./src/**/*.ts"
   ],
-  "exclude": [
-    ".fttemplates/",
-    "./src/server/"
-  ]
 }
+

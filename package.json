@@ -4,7 +4,8 @@
   "description": "Cube Meta",
   "main": "index.js",
   "scripts": {
-    "client-start": "webpack serve --env port=3000"
+    "client-start": "webpack serve --env port=3000",
+    "server-start": "tsx watch src/server/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -44,8 +45,11 @@
     "@babylonjs/loaders": "^6.30.0",
     "@babylonjs/serializers": "^6.30.0",
     "@colyseus/arena": "^0.14.24",
+    "@colyseus/playground": "^0.15.7",
+    "@colyseus/tools": "^0.15.23",
     "babylonjs-gltf2interface": "^6.30.0",
     "colyseus": "^0.15.13",
-    "colyseus.js": "^0.15.14"
+    "colyseus.js": "^0.15.14",
+    "tsx": "^4.6.1"
   }
 }
