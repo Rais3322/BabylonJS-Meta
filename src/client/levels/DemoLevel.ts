@@ -34,7 +34,9 @@ export class Level {
   }
 
   public createScene() {
-    Inspector.Show(this.scene, {});
+    if (__IS_DEV__) {
+      Inspector.Show(this.scene, {});
+    }
 
     const framesPerSecond = 60;
     const gravity = -9.81;
