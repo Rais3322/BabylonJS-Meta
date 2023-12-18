@@ -122,10 +122,13 @@ export class Level {
   }
 
   private load(sceneFilename: string, rootName: string, parent: TransformNode,
-    rootCb: (mesh: AbstractMesh) => void | undefined) {
+    rootCb: (mesh: AbstractMesh) => void | undefined, addPath: string = undefined) {
+
+    const rootUrl = addPath ? "./models/" + addPath : "./models/";
+
     SceneLoader.ImportMesh(
       "",
-      "./models/",
+      rootUrl,
       sceneFilename,
       this.scene,
       (meshes, particleSystems, skeletons, animationGroups, transformNodes) => {
@@ -147,8 +150,10 @@ export class Level {
           // пропускается обновление бокса для коллизии
           mesh.doNotSyncBoundingInfo = true;
 
-          // пропускается трансформация
-          mesh.freezeWorldMatrix();
+          if (!__IS_DEV__) {
+            // пропускается трансформация
+            mesh.freezeWorldMatrix();
+          }
 
           // ScenePerformancePriority.Intermediate включает следующее по умолчанию
           mesh.alwaysSelectAsActiveMesh = false;
@@ -192,6 +197,15 @@ export class Level {
     // this.load("морской.glb", 'морской_root', transformNode,
     //   mesh => { mesh.position.set(-101.69, -0.20, 13.04) },
     // );
+
+    const transformTree = new TransformNode("transformTree", this.scene);
+
+    this.load("Trees_Test.glb", 'tree_root', transformTree,
+      mesh => {
+        mesh.position.set(36, -1, -36);
+      },
+      'tree/'
+    );
   }
 
   private optimise() {

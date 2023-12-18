@@ -39,15 +39,18 @@ export class GameEngine {
 
   private async optimize() {
     //test
-    setTimeout(async () => {
-      const supported = await WebGPUEngine.IsSupportedAsync;
-      if (supported) {
-        // +7 fps for WebGPUEngine
-        console.log('snapshotRendering');
-        this.renderEngine.snapshotRendering = true;
-        this.renderEngine.snapshotRenderingMode = Constants.SNAPSHOTRENDERING_STANDARD;
-      }
-    }, 6000);
+    if (!__IS_DEV__) {
+      // инспектор может не обновлять информацию
+      setTimeout(async () => {
+        const supported = await WebGPUEngine.IsSupportedAsync;
+        if (supported) {
+          // +7 fps for WebGPUEngine
+          console.log('snapshotRendering');
+          this.renderEngine.snapshotRendering = true;
+          this.renderEngine.snapshotRenderingMode = Constants.SNAPSHOTRENDERING_STANDARD;
+        }
+      }, 6000);
+    }
   }
 
   private async createRenderEngine() {
