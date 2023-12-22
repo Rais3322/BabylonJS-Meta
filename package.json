@@ -6,7 +6,8 @@
   "scripts": {
     "client-start": "webpack serve --env port=3000",
     "client-build": "webpack --env mode=production",
-    "server-start": "tsx watch src/server/index.ts"
+    "server-start": "tsx watch src/server/index.ts",
+    "sstart": "tsx watch src/client/engine/HeadlessEngine.ts --tsconfig config/server/tsconfig.json"
   },
   "keywords": [],
   "author": "",
@@ -52,5 +53,6 @@
     "colyseus": "^0.15.13",
     "colyseus.js": "^0.15.14",
     "tsx": "^4.6.1"
-  }
+  },
+  "type": "module"
 }

@@ -3,11 +3,12 @@ import { Inspector } from "@babylonjs/inspector";
 import { LevelController } from "client/controllers/LevelController";
 import { PlayerController } from "client/controllers/PlayerController";
 import { GameEngine } from "client/engine/GameEngine";
+import { HeadlessEngine } from "client/engine/HeadlessEngine";
 import { Player } from "client/entities/Player";
 
 
 export class Level {
-  private gameEngine: GameEngine;
+  private gameEngine: GameEngine | HeadlessEngine;
 
   public scene: Scene;
   public playerController: PlayerController;
@@ -16,7 +17,7 @@ export class Level {
 
   public onPointerDown: (evt: IPointerEvent, pickInfo: PickingInfo, type: PointerEventTypes) => void;
 
-  constructor(gameEngine: GameEngine) {
+  constructor(gameEngine: GameEngine | HeadlessEngine) {
     this.gameEngine = gameEngine;
 
     this.scene = new Scene(this.gameEngine.renderEngine);
