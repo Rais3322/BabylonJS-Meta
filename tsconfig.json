@@ -10,11 +10,11 @@
     "esModuleInterop": true,
     "strict": true,
     // for server
-    "skipLibCheck": true, 
-    "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": false,
-    "strictNullChecks": false,
-    "experimentalDecorators": true,
+    // "skipLibCheck": true, 
+    // "forceConsistentCasingInFileNames": true,
+    // "useDefineForClassFields": false,
+    // "strictNullChecks": false,
+    // "experimentalDecorators": true,
     //===================
     //для абсолютного импорта ,
     "baseUrl": ".",
@@ -34,4 +34,3 @@
     "./src/**/*.ts"
   ],
 }
-
