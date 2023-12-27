@@ -12,16 +12,16 @@ export class World {
   createdLevels: Level[] = [];
   // loadingLevel: Level | null = null; // загрузочный уровень
 
-  worldSettings: WorldSettings;
-  assetsManager: AssetsManager; // TODO протестить
-  // gameState: GameState;
-  // gameMode: GameMode;
+  worldSettings: WorldSettings;  // глобальные настройки окружения
+  assetsManager: AssetsManager;  // TODO протестить
+  // gameState: GameState;       // состояние игры для переноса между уровнями
+  // gameMode: GameMode;         // игровые правила
 
   readonly persistentLevel: Level;
-  readonly persistentScene: Scene;
+  readonly persistentScene: Scene;  // обязателен для старта бабилона
 
   private owningGameInstance: GameInstance;
-  private currentLevel: Level | null = null;
+  private currentLevel: Level | null = null;  // активный уровень
 
   constructor(gameInstance: GameInstance, worldSettings?: IWorldSettings) {
     this.URL = String(new Date().getTime());
@@ -57,9 +57,7 @@ export class World {
 
   // onInitWorld: (() => IWorldSettings) | undefined = undefined;
 
-  addActor(actor: Actor) {
-
-  }
+  addActor(actor: Actor) { }
 
   getEngine() { return this.owningGameInstance.engineRef }
 
@@ -88,16 +86,21 @@ export class World {
     this.levels.push(level);
   }
 
-  loadLevel(level: Level) {
-
+  async loadLevel(level: Level) {
+    await level.load();
   }
 
   activateLevel(level: Level) {
     this.currentLevel = level;
   }
 
-  loadAndActivateLevel(level: Level) {
+  async loadAndChangeLevel(level: Level) {
+    await this.loadLevel(level);
+    this.activateLevel(level);
+  }
 
+  render() {
+    this.currentLevel?.scene?.render();
   }
 
   // private createPersistentLevel(): Level {

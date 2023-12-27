@@ -123,7 +123,7 @@ export class Level {
   }
 
   private load(sceneFilename: string, rootName: string, parent: TransformNode,
-    rootCb: (mesh: AbstractMesh) => void | undefined, addPath: string = undefined) {
+    rootCb: (mesh: AbstractMesh) => void | undefined, addPath?: string) {
 
     const rootUrl = addPath ? "./models/" + addPath : "./models/";
 

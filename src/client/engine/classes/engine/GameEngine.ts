@@ -64,6 +64,7 @@ export class GameEngine {
       this.onStart();
 
       this.renderEngine.runRenderLoop(() => {
+        // stop
         if (this.gameInstance.error) {
           this.renderEngine.stopRenderLoop();
           this.exit();

@@ -55,7 +55,7 @@ export class GameInstance {
   // }
 
   render() {
-
+    this.currentWorld?.render();
   }
 
   load() { }
