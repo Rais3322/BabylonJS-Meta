@@ -9,11 +9,11 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": false,
     // for server
-    // "skipLibCheck": true, 
-    // "forceConsistentCasingInFileNames": true,
     // "useDefineForClassFields": false,
-    // "strictNullChecks": false,
     // "experimentalDecorators": true,
     //===================
     //для абсолютного импорта ,
@@ -33,4 +33,8 @@
   "include": [
     "./src/**/*.ts"
   ],
+  "exclude": [
+    "node_modules",
+    "./src/server",
+  ]
 }

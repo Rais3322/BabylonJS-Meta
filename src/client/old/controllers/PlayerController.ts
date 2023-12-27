@@ -1,9 +1,9 @@
 import { IPointerEvent, KeyboardInfo, Mesh, MeshBuilder, PickingInfo, PointerInfo, Scene, Vector3 } from "@babylonjs/core";
-import { Level } from "client/levels/DemoLevel";
+import { Level } from "client/old/levels/DemoLevel";
 import { Network } from "./Network";
 import { Room } from "colyseus.js";
 import { Player as ServerPlayer } from "server/rooms/schema/MyRoomState";
-import { Player } from "client/entities/Player";
+import { Player } from "client/old/entities/Player";
 
 export class PlayerController {
   level: Level;

@@ -1,6 +1,6 @@
 import { MeshBuilder, ArcRotateCamera, Camera, FreeCamera, Scene, SceneLoader, Vector3 } from "@babylonjs/core";
-import { CharacterController } from "client/controllers/CharacterController";
-import { PlayerController } from "client/controllers/PlayerController";
+import { CharacterController } from "client/old/controllers/CharacterController";
+import { PlayerController } from "client/old/controllers/PlayerController";
 
 export class Player {
   private playerController: PlayerController;

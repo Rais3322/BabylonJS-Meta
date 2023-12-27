@@ -6,8 +6,8 @@ import {
   SceneOptimizer,
   NullEngine,
 } from "@babylonjs/core";
-import { Network } from "client/controllers/Network";
-import { Level } from "client/levels/DemoLevel";
+import { Network } from "client/old/controllers/Network";
+import { Level } from "client/old/levels/DemoLevel";
 
 export class GameEngine {
   canvas: HTMLCanvasElement;

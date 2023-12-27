@@ -1,10 +1,11 @@
+// @ts-nocheck
 import { AbstractMesh, ShadowsOptimization, TextureOptimization, HardwareScalingOptimization, SceneOptimizerOptions, SceneOptimizer, Color3, ScenePerformancePriority, ShadowGenerator, DirectionalLight, CubeTexture, HemisphericLight, MeshBuilder, Scene, SceneLoader, StandardMaterial, Texture, TransformNode, Vector3, Mesh, IPointerEvent, PickingInfo, PointerEventTypes } from "@babylonjs/core";
 import { Inspector } from "@babylonjs/inspector";
-import { LevelController } from "client/controllers/LevelController";
-import { PlayerController } from "client/controllers/PlayerController";
-import { GameEngine } from "client/engine/GameEngine";
-import { HeadlessEngine } from "client/engine/HeadlessEngine";
-import { Player } from "client/entities/Player";
+import { LevelController } from "client/old/controllers/LevelController";
+import { PlayerController } from "client/old/controllers/PlayerController";
+import { GameEngine } from "client/old/GameEngine";
+import { HeadlessEngine } from "client/old/HeadlessEngine";
+import { Player } from "client/old/entities/Player";
 
 
 export class Level {

@@ -16,7 +16,7 @@ function getApiUrl(mode: BuildMode, apiUrl?: string) {
 
 export default (env: BuildEnv) => {
   const paths: BuildPaths = {
-    entry: path.resolve(__dirname, 'src', 'testgame', 'index.ts'),
+    entry: path.resolve(__dirname, 'src', 'client', 'index.ts'),
     build: path.resolve(__dirname, 'dist', 'client'),
     html: path.resolve(__dirname, 'public', 'index.html'),
     src: path.resolve(__dirname, 'src'),

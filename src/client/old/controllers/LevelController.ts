@@ -1,4 +1,4 @@
-import { Level } from "client/levels/DemoLevel";
+import { Level } from "client/old/levels/DemoLevel";
 
 // логика одного уровня
 export class LevelController {
